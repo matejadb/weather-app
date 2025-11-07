@@ -1,66 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<!-- displays site properly based on user's device -->
+		<link
+			rel="icon"
+			type="image/png"
+			sizes="32x32"
+			href="./assets/images/favicon-32x32.png"
+		/>
+		<link rel="stylesheet" href="./styles/style.css" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
+			rel="stylesheet"
+		/>
+		<title>Frontend Mentor | Weather app</title>
+	</head>
+	<body>
+		<div class="container">
+			<nav class="menu">
+				<div class="menu-site-link">
+					<a href="#" class="site-link">
+						<img src="./assets/images/logo.svg" class="site-logo" />
+					</a>
+				</div>
 
-  <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/favicon-32x32.png">
-  
-  <title>Frontend Mentor | Weather app</title>
+				<div class="menu-wrapper">
+					<ul class="menu-list">
+						<li class="menu-item">
+							<a href="#" class="item">
+								<img src="/assets/images/icon-units.svg" class="icon-units" />
+								<span class="item-title">Units</span>
+								<img
+									src="./assets/images/icon-dropdown.svg"
+									class="icon-dropdown"
+								/>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</nav>
 
-  <!-- Feel free to remove these styles or customise in your own stylesheet 👍 -->
-  <style>
-    .attribution { font-size: 11px; text-align: center; }
-    .attribution a { color: hsl(228, 45%, 44%); }
-  </style>
-</head>
-<body>
+			<h1 class="title">How's the sky looking today?</h1>
 
-  Units
+			<div class="main-content-container">
+				<div class="search-container">
+					<form class="search-form">
+						<input type="text" placeholder="Search for a place..." />
+						<button type="submit" class="btn">Search</button>
+					</form>
+				</div>
+				<div class="content-container"></div>
+			</div>
+		</div>
 
-  Switch to Imperial/Metric
-
-  Temperature
-
-  Celsius (°C)
-  Fahrenheit (°F)
-
-  Wind Speed
-
-  km/h
-  mph
-
-  Precipitation
-
-  Millimeters (mm)
-  Inches (in)
-
-  How's the sky looking today?
-
-  Search for a city, e.g., New York
-  Search
-
-  Feels like
-  <!-- Insert temperature here -->
-
-  Humidity
-  <!-- Insert humidity here -->
-
-  Wind
-  <!-- Insert wind here -->   
-  
-  Precipitation
-  <!-- Insert precipitation here -->
-
-  Daily forecast
-  <!-- Insert daily forecast for the next 7 days here -->
-
-  Hourly forecast
-  <!-- Insert hourly forecast for the selected day here -->
-
-  <div class="attribution">
-    Challenge by <a href="https://www.frontendmentor.io?ref=challenge">Frontend Mentor</a>. 
-    Coded by <a href="#">Your Name Here</a>.
-  </div>
-</body>
+		<script src="./scripts/script.js"></script>
+	</body>
 </html>
