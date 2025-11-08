@@ -76,7 +76,7 @@ li {
 	gap: 6.4rem;
 	padding: 4.8rem 11.2rem 8rem 11.2rem;
 	margin: 0 auto;
-	max-width: 121.6rem;
+	max-width: 144rem;
 }
 
 .title {
@@ -171,10 +171,19 @@ input[type='text'] {
 	border: none;
 }
 
+.content-container {
+	display: grid;
+	grid-template-columns: 2fr 1fr;
+
+	gap: 3.2rem;
+	align-items: start;
+}
+
 .left-content-container {
-	display: flex;
-	flex-direction: column;
+	display: grid;
+	grid-template-rows: 2fr 1fr;
 	gap: 4.8rem;
+	height: 100%;
 }
 
 /* WEATHER INFO CONTAINER */
@@ -255,7 +264,7 @@ input[type='text'] {
 	background-color: var(--neutral-800);
 	border: 1px solid var(--neutral-600);
 	border-radius: 12px;
-	/* width: 100%; */
+	width: 100%;
 }
 
 .detail-title {
@@ -278,7 +287,9 @@ input[type='text'] {
 .daily-forecast-container {
 	display: flex;
 	flex-direction: column;
-	gap: 2rem;
+	justify-content: space-between;
+	/* gap: 2rem; */
+	/* height: max-content; */
 }
 
 .daily-forecast-title {
@@ -303,7 +314,7 @@ input[type='text'] {
 	background-color: var(--neutral-800);
 	border: 1px solid var(--neutral-600);
 	border-radius: 12px;
-	/* width: 100%; */
+	width: 100%;
 }
 
 .day {
@@ -341,6 +352,7 @@ input[type='text'] {
 	padding: 2.4rem;
 	border-radius: 20px;
 	background-color: var(--neutral-800);
+	height: 100%;
 }
 
 .hourly-forecast-header {
