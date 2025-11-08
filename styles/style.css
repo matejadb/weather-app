@@ -171,7 +171,7 @@ input[type='text'] {
 	border: none;
 }
 
-.left-content {
+.left-content-container {
 	display: flex;
 	flex-direction: column;
 	gap: 4.8rem;
@@ -245,7 +245,6 @@ input[type='text'] {
 .weather-details {
 	display: flex;
 	gap: 2.4rem;
-	width: 100%;
 }
 
 .detail {
@@ -256,7 +255,7 @@ input[type='text'] {
 	background-color: var(--neutral-800);
 	border: 1px solid var(--neutral-600);
 	border-radius: 12px;
-	width: 18.2rem;
+	/* width: 100%; */
 }
 
 .detail-title {
@@ -304,7 +303,7 @@ input[type='text'] {
 	background-color: var(--neutral-800);
 	border: 1px solid var(--neutral-600);
 	border-radius: 12px;
-	/* width: 11.1rem; */
+	/* width: 100%; */
 }
 
 .day {
@@ -332,6 +331,76 @@ input[type='text'] {
 	font-weight: 500;
 	font-family: 'DM Sans', sans-serif;
 	line-height: 1.2;
+}
+
+/* HOURLY FORECAST CONTAINER */
+.hourly-forecast-container {
+	display: flex;
+	flex-direction: column;
+	gap: 1.6rem;
+	padding: 2.4rem;
+	border-radius: 20px;
+	background-color: var(--neutral-800);
+}
+
+.hourly-forecast-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.hourly-forecast-title {
+	color: var(--neutral-0);
+	font-family: 'DM Sans', sans-serif;
+	font-weight: 600;
+	font-size: 2rem;
+	line-height: 1.2;
+}
+
+.forecast-item {
+	text-decoration: none;
+	display: flex;
+	gap: 1.2rem;
+	padding: 0.8rem 1.6rem;
+	background-color: var(--neutral-600);
+	border-radius: 8px;
+}
+
+.forecast-title {
+	font-family: 'DM Sans', sans-serif;
+	font-weight: 500;
+	font-size: 1.6rem;
+	line-height: 1.2;
+	color: var(--neutral-0);
+}
+
+.hourly-weather-card {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background-color: var(--neutral-700);
+	padding: 1rem 1.6rem 1rem 1.2rem;
+	border-radius: 8px;
+	border: 1px solid var(--neutral-600);
+}
+
+.hourly-forecast-time {
+	display: flex;
+	align-items: center;
+	gap: 0.8rem;
+}
+
+.forecast-weather-icon {
+	height: 4rem;
+	width: 4rem;
+}
+
+.forecast-time {
+	font-family: 'DM Sans', sans-serif;
+	font-weight: 500;
+	font-size: 2rem;
+	line-height: 1.2;
+	color: var(--neutral-0);
 }
 
 /* - Mobile: 375px
