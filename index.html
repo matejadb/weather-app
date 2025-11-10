@@ -9,6 +9,7 @@
 			sizes="32x32"
 			href="./assets/images/favicon-32x32.png"
 		/>
+		<link rel="stylesheet" href="./styles/dropdown.css" />
 		<link rel="stylesheet" href="./styles/style.css" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -27,19 +28,41 @@
 					</a>
 				</div>
 
-				<div class="menu-wrapper">
-					<ul class="menu-list">
-						<li class="menu-item">
-							<a href="#" class="item">
-								<img src="/assets/images/icon-units.svg" class="icon-units" />
-								<span class="item-title">Units</span>
-								<img
-									src="./assets/images/icon-dropdown.svg"
-									class="icon-dropdown"
-								/>
-							</a>
-						</li>
-					</ul>
+				<div class="units-dropdown">
+					<button onclick="myFunction()" class="item">
+						<img src="/assets/images/icon-units.svg" class="icon-units" />
+						<span class="item-title">Units</span>
+						<img
+							src="./assets/images/icon-dropdown.svg"
+							class="icon-dropdown"
+						/>
+					</button>
+					<div id="myDropdown" class="units-dropdown-content">
+						<a href="#" class="units-dropdown-item">Switch to Imperial</a>
+						<div class="units-dropdown-container">
+							<span class="unit-option">Temperature</span>
+							<div class="unit-options-container">
+								<a href="#" class="units-dropdown-item">Celsius (&deg;C)</a>
+								<a href="#" class="units-dropdown-item">Fahrenheit (&deg;F)</a>
+							</div>
+						</div>
+						<hr />
+						<div class="units-dropdown-container">
+							<span class="unit-option">Wind Speed</span>
+							<div class="unit-options-container">
+								<a href="#" class="units-dropdown-item">km/h</a>
+								<a href="#" class="units-dropdown-item">mph</a>
+							</div>
+						</div>
+						<hr />
+						<div class="units-dropdown-container">
+							<span class="unit-option">Precipitation</span>
+							<div class="unit-options-container">
+								<a href="#" class="units-dropdown-item">Millimeters (mm)</a>
+								<a href="#" class="units-dropdown-item">Inches (in)</a>
+							</div>
+						</div>
+					</div>
 				</div>
 			</nav>
 

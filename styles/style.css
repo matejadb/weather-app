@@ -69,6 +69,12 @@ li {
 	list-style: none;
 }
 
+hr {
+	border: none;
+	height: 1px;
+	background-color: var(--neutral-600);
+}
+
 /* CONTAINER */
 .container {
 	display: flex;
@@ -100,7 +106,7 @@ li {
 }
 
 .item {
-	text-decoration: none;
+	border: none;
 	display: flex;
 	gap: 1rem;
 	padding: 1.2rem 1.6rem;
@@ -109,6 +115,7 @@ li {
 }
 
 .item:hover {
+	cursor: pointer;
 	background-color: var(--neutral-700);
 }
 
