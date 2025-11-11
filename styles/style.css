@@ -105,7 +105,7 @@ hr {
 	height: 4rem;
 }
 
-.item {
+.btn-dropdown {
 	border: none;
 	display: flex;
 	gap: 1rem;
@@ -114,22 +114,25 @@ hr {
 	border-radius: 8px;
 }
 
-.item:hover {
+.btn-dropdown:hover {
 	cursor: pointer;
 	background-color: var(--neutral-700);
 }
 
-.item:focus {
+.btn-dropdown:focus {
 	outline: 3px solid var(--neutral-0);
 	outline-offset: 5px;
 }
 
-.icon-units {
+.icon-units,
+.icon-checked {
+	pointer-events: none;
 	height: 1.6rem;
 	width: 1.6rem;
 }
 
 .item-title {
+	pointer-events: none;
 	font-family: 'DM Sans', sans-serif;
 	font-weight: 500;
 	font-size: 1.6rem;
@@ -138,6 +141,7 @@ hr {
 }
 
 .icon-dropdown {
+	pointer-events: none;
 	width: 1.2rem;
 	height: 1.8rem;
 }

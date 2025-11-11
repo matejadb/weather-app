@@ -29,7 +29,7 @@
 				</div>
 
 				<div class="units-dropdown">
-					<button onclick="myFunction()" class="item">
+					<button class="btn-dropdown">
 						<img src="/assets/images/icon-units.svg" class="icon-units" />
 						<span class="item-title">Units</span>
 						<img
@@ -37,29 +37,71 @@
 							class="icon-dropdown"
 						/>
 					</button>
-					<div id="myDropdown" class="units-dropdown-content">
+					<div class="units-dropdown-content">
 						<a href="#" class="units-dropdown-item">Switch to Imperial</a>
 						<div class="units-dropdown-container">
 							<span class="unit-option">Temperature</span>
-							<div class="unit-options-container">
-								<a href="#" class="units-dropdown-item">Celsius (&deg;C)</a>
-								<a href="#" class="units-dropdown-item">Fahrenheit (&deg;F)</a>
+							<div class="unit-options-container temperature">
+								<a href="#" class="units-dropdown-item checked">
+									<span>Celsius (&deg;C)</span>
+									<img
+										src="./assets/images/icon-checkmark.svg"
+										alt=""
+										class="icon-checked"
+									/>
+								</a>
+								<a href="#" class="units-dropdown-item">
+									<span>Fahrenheit (&deg;F)</span>
+									<img
+										src="./assets/images/icon-checkmark.svg"
+										alt=""
+										class="icon-checked hidden"
+									/>
+								</a>
 							</div>
 						</div>
 						<hr />
 						<div class="units-dropdown-container">
 							<span class="unit-option">Wind Speed</span>
-							<div class="unit-options-container">
-								<a href="#" class="units-dropdown-item">km/h</a>
-								<a href="#" class="units-dropdown-item">mph</a>
+							<div class="unit-options-container wind-speed">
+								<a href="#" class="units-dropdown-item checked">
+									<span>km/h</span>
+									<img
+										src="./assets/images/icon-checkmark.svg"
+										alt=""
+										class="icon-checked"
+									/>
+								</a>
+								<a href="#" class="units-dropdown-item">
+									<span>mph</span>
+									<img
+										src="./assets/images/icon-checkmark.svg"
+										alt=""
+										class="icon-checked hidden"
+									/>
+								</a>
 							</div>
 						</div>
 						<hr />
 						<div class="units-dropdown-container">
 							<span class="unit-option">Precipitation</span>
-							<div class="unit-options-container">
-								<a href="#" class="units-dropdown-item">Millimeters (mm)</a>
-								<a href="#" class="units-dropdown-item">Inches (in)</a>
+							<div class="unit-options-container precipitation">
+								<a href="#" class="units-dropdown-item checked">
+									<span>Millimeters (mm)</span>
+									<img
+										src="./assets/images/icon-checkmark.svg"
+										alt=""
+										class="icon-checked"
+									/>
+								</a>
+								<a href="#" class="units-dropdown-item">
+									<span>Inches (in)</span>
+									<img
+										src="./assets/images/icon-checkmark.svg"
+										alt=""
+										class="icon-checked hidden"
+									/>
+								</a>
 							</div>
 						</div>
 					</div>

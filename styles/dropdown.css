@@ -57,9 +57,25 @@
 	border-radius: 8px;
 }
 
+.units-dropdown-item span {
+	pointer-events: none;
+}
+
 .units-dropdown-item:hover {
 	background-color: var(--neutral-700);
 }
+
+.checked {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: var(--neutral-700);
+}
+
+.hidden {
+	display: none;
+}
+
 .units-dropdown-item:focus {
 	outline: 1px solid var(--neutral-0);
 	outline-offset: 2px;
