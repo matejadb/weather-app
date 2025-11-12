@@ -62,13 +62,12 @@ async function getWeatherByCity(cityName) {
 	const weather = await fetch(
 		`${global.api.apiUrl}latitude=${place.latitude}&longitude=${
 			place.longitude
-		}&current=temperature_2m,${global.api.apiEnd}${
-			unitParams ? `&${unitParams}` : ''
-		}`
+		}&daily=weather_code,temperature_2m_max,temperature_2m_min&current=temperature_2m,${
+			global.api.apiEnd
+		}${unitParams ? `&${unitParams}` : ''}`
 	);
 
 	const weatherData = await weather.json();
-	// console.log(weatherData);
 	return weatherData;
 }
 
@@ -151,6 +150,43 @@ async function getWeatherInformation(e) {
 }
 
 function updateWeatherUI(weatherData, cityData) {
+	buildMainForecastInformation(weatherData, cityData);
+	buildDailyForecastInformation(weatherData);
+}
+
+function buildDailyForecastInformation(weatherData) {
+	const days = getNext7Days();
+	const { daily } = weatherData;
+
+	document.querySelector('.daily-forecast').innerHTML = ``;
+	for (let i = 0; i < 7; i++) {
+		const divCard = document.createElement('div');
+		divCard.classList.add('card');
+		const spanDay = document.createElement('span');
+		spanDay.classList.add('day');
+		spanDay.textContent = days[i];
+
+		const img = document.createElement('img');
+		img.classList.add('weather-icon');
+		img.src = setWeatherIcon(daily.weather_code[i]);
+
+		const divRange = document.createElement('div');
+		divRange.classList.add('temperature-range');
+
+		const spanMin = document.createElement('span');
+		spanMin.classList.add('temperature', 'min');
+		spanMin.textContent = `${Math.round(daily.temperature_2m_min[i])} \u00B0`;
+		const spanMax = document.createElement('span');
+		spanMax.classList.add('temperature', 'max');
+		spanMax.textContent = `${Math.round(daily.temperature_2m_max[i])} \u00B0`;
+
+		divRange.append(spanMax, spanMin);
+		divCard.append(spanDay, img, divRange);
+		document.querySelector('.daily-forecast').appendChild(divCard);
+	}
+}
+
+function buildMainForecastInformation(weatherData, cityData) {
 	temperatureText.textContent = `${Math.round(
 		weatherData.current.temperature_2m
 	)} \u00B0`;
@@ -179,6 +215,24 @@ function updateWeatherUI(weatherData, cityData) {
 	precipitation.textContent = `${weatherData.current.precipitation} ${
 		global.units.precipitation === 'millimeters' ? 'mm' : 'inch'
 	}`;
+}
+
+// Daily Forecast Information
+
+function getNext7Days() {
+	const days = [];
+	const options = { weekday: 'short' }; // Mon, Tue, Wed
+
+	const today = new Date();
+
+	for (let i = 0; i < 7; i++) {
+		const date = new Date(today);
+		date.setDate(today.getDate() + i);
+
+		days.push(date.toLocaleDateString('en-US', options));
+	}
+
+	return days;
 }
 
 function setWeatherIcon(code) {
