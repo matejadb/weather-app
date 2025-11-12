@@ -4,6 +4,12 @@ const global = {
 		windSpeed: 'km/h',
 		precipitation: 'millimeters',
 	},
+	api: {
+		apiUrl: 'https://api.open-meteo.com/v1/forecast?',
+		apiEnd:
+			'precipitation,wind_speed_10m,relative_humidity_2m,apparent_temperature,weather_code',
+	},
+	lastCity: '',
 };
 
 const dropdownTemperature = document.querySelector('.temperature');
@@ -23,6 +29,62 @@ const humidity = document.querySelector('.detail-humidity');
 const wind = document.querySelector('.detail-wind');
 const precipitation = document.querySelector('.detail-precipitation');
 
+// Fetch Data
+
+async function getCityInfo(city) {
+	const geo = await fetch(
+		`https://geocoding-api.open-meteo.com/v1/search?name=${city}`
+	);
+	const geoData = await geo.json();
+	const place = geoData.results[0];
+
+	return place;
+}
+
+function buildUnitParams(units) {
+	const params = [];
+
+	if (units.temperature === 'fahrenheit')
+		params.push('temperature_unit=fahrenheit');
+
+	if (units.windSpeed === 'mph') params.push('wind_speed_unit=mph');
+
+	if (units.precipitation === 'inch') params.push('precipitation_unit=inch');
+
+	return params.join('&');
+}
+
+async function getWeatherByCity(cityName) {
+	const place = await getCityInfo(cityName);
+
+	const unitParams = buildUnitParams(global.units);
+
+	const weather = await fetch(
+		`${global.api.apiUrl}latitude=${place.latitude}&longitude=${
+			place.longitude
+		}&current=temperature_2m,${global.api.apiEnd}${
+			unitParams ? `&${unitParams}` : ''
+		}`
+	);
+
+	const weatherData = await weather.json();
+	// console.log(weatherData);
+	return weatherData;
+}
+
+// Units Dropdown Menu
+
+function openUnitsDropdown(e) {
+	e.stopPropagation();
+	dropdownContent.classList.toggle('show');
+}
+
+function closeUnitsDropdown(e) {
+	if (!dropdownContent.contains(e.target) && e.target !== dropdownBtn) {
+		dropdownContent.classList.remove('show');
+	}
+}
+
 function changeTemperatureUnits(e) {
 	if (e.target.classList.contains('units-dropdown-item')) {
 		dropdownTemperature.querySelectorAll('a').forEach((unit) => {
@@ -35,6 +97,8 @@ function changeTemperatureUnits(e) {
 			.trim()
 			.split(' ')[0]
 			.toLowerCase();
+
+		if (global.lastCity) getWeatherInformation();
 	}
 }
 
@@ -51,6 +115,8 @@ function changeWindSpeedUnits(e) {
 			.trim()
 			.split(' ')[0]
 			.toLowerCase();
+
+		if (global.lastCity) getWeatherInformation();
 	}
 }
 
@@ -67,27 +133,24 @@ function changePrecipitationUnits(e) {
 			.trim()
 			.split(' ')[0]
 			.toLowerCase();
-	}
-}
 
-function openUnitsDropdown(e) {
-	e.stopPropagation();
-	dropdownContent.classList.toggle('show');
-}
-
-function closeUnitsDropdown(e) {
-	if (!dropdownContent.contains(e.target) && e.target !== dropdownBtn) {
-		dropdownContent.classList.remove('show');
+		if (global.lastCity) getWeatherInformation();
 	}
 }
 
 async function getWeatherInformation(e) {
-	e.preventDefault();
+	if (e) e.preventDefault();
 	const input = document.querySelector('input').value;
 
 	const weatherData = await getWeatherByCity(input);
 	const cityData = await getCityInfo(input);
 
+	global.lastCity = input;
+
+	updateWeatherUI(weatherData, cityData);
+}
+
+function updateWeatherUI(weatherData, cityData) {
 	temperatureText.textContent = `${Math.round(
 		weatherData.current.temperature_2m
 	)} \u00B0`;
@@ -95,67 +158,59 @@ async function getWeatherInformation(e) {
 	locationText.textContent = `${cityData.name}, ${cityData.country}`;
 
 	const today = new Date();
-
 	const options = {
 		weekday: 'long',
 		month: 'short',
 		day: 'numeric',
 		year: 'numeric',
 	};
-
 	dateText.textContent = today.toLocaleDateString('en-US', options);
 
 	feelsLike.textContent = `${Math.round(
 		weatherData.current.apparent_temperature
 	)} \u00B0`;
+
 	humidity.textContent = `${weatherData.current.relative_humidity_2m}%`;
-	wind.textContent = `${Math.round(weatherData.current.wind_speed_10m)} km/h`;
-	precipitation.textContent = `${weatherData.current.precipitation} mm`;
-	// console.log(weatherData);
-	// console.log(cityData);
+
+	wind.textContent = `${Math.round(weatherData.current.wind_speed_10m)} ${
+		global.units.windSpeed === 'km/h' ? 'km/h' : 'mph'
+	}`;
+
+	precipitation.textContent = `${weatherData.current.precipitation} ${
+		global.units.precipitation === 'millimeters' ? 'mm' : 'inch'
+	}`;
 }
 
 function setWeatherIcon(code) {
-	switch (code) {
-		case 0:
-		case 1:
-			return './assets/images/icon-sunny.webp';
-		case 2:
-			return './assets/images/icon-partly-cloudy.webp';
-		case 3:
-			return './assets/images/icon-overcast.webp';
-		case 45:
-		case 48:
-			return './assets/images/icon-fog.webp';
-		case 51:
-		case 53:
-		case 55:
-		case 56:
-		case 57:
-			return './assets/images/icon-drizzle.webp';
-		case 61:
-		case 63:
-		case 65:
-		case 66:
-		case 67:
-		case 80:
-		case 81:
-		case 82:
-			return './assets/images/icon-rain.webp';
-		case 71:
-		case 73:
-		case 75:
-		case 77:
-		case 85:
-		case 86:
-			return './assets/images/icon-snow.webp';
-		case 95:
-		case 96:
-		case 99:
-			return './assets/images/icon-storm.webp';
-		default:
-			return './assets/images/icon-sunny.webp';
+	const iconMap = {
+		sunny: [0, 1],
+		partlyCloudy: [2],
+		overcast: [3],
+		fog: [45, 48],
+		drizzle: [51, 53, 55, 56, 57],
+		rain: [61, 63, 65, 67, 80, 81, 82],
+		snow: [71, 73, 75, 77, 85, 86],
+		storm: [95, 96, 99],
+	};
+
+	const icons = {
+		sunny: './assets/images/icon-sunny.webp',
+		partlyCloudy: './assets/images/icon-partly-cloudy.webp',
+		overcast: './assets/images/icon-overcast.webp',
+		fog: './assets/images/icon-fog.webp',
+		drizzle: './assets/images/icon-drizzle.webp',
+		rain: './assets/images/icon-rain.webp',
+		snow: './assets/images/icon-snow.webp',
+		storm: './assets/images/icon-storm.webp',
+	};
+
+	for (const [key, codes] of Object.entries(iconMap)) {
+		if (codes.includes(code)) {
+			return icons[key];
+		}
 	}
+
+	return icons.sunny;
 }
 
 dropdownTemperature.addEventListener('click', changeTemperatureUnits);
@@ -165,26 +220,3 @@ dropdownBtn.addEventListener('click', openUnitsDropdown);
 searchForm.addEventListener('submit', getWeatherInformation);
 
 window.addEventListener('click', closeUnitsDropdown);
-
-async function getCityInfo(city) {
-	const geo = await fetch(
-		`https://geocoding-api.open-meteo.com/v1/search?name=${city}`
-	);
-	const geoData = await geo.json();
-	const place = geoData.results[0];
-
-	return place;
-}
-
-async function getWeatherByCity(cityName) {
-	const place = await getCityInfo(cityName);
-
-	// console.log(place);
-	const weather = await fetch(
-		`https://api.open-meteo.com/v1/forecast?latitude=${place.latitude}&longitude=${place.longitude}&current=temperature_2m,precipitation,wind_speed_10m,relative_humidity_2m,apparent_temperature,weather_code`
-	);
-
-	const weatherData = await weather.json();
-	// console.log(weatherData);
-	return weatherData;
-}
