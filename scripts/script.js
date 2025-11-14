@@ -62,12 +62,13 @@ async function getWeatherByCity(cityName) {
 	const weather = await fetch(
 		`${global.api.apiUrl}latitude=${place.latitude}&longitude=${
 			place.longitude
-		}&daily=weather_code,temperature_2m_max,temperature_2m_min&current=temperature_2m,${
+		}&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&current=temperature_2m,${
 			global.api.apiEnd
 		}${unitParams ? `&${unitParams}` : ''}`
 	);
 
 	const weatherData = await weather.json();
+	console.log(weatherData);
 	return weatherData;
 }
 
@@ -152,6 +153,31 @@ async function getWeatherInformation(e) {
 function updateWeatherUI(weatherData, cityData) {
 	buildMainForecastInformation(weatherData, cityData);
 	buildDailyForecastInformation(weatherData);
+	buildHourlyForecastInformation(weatherData);
+}
+
+function getNext7Days() {
+	const days = [];
+	const options = { weekday: 'short' }; // Mon, Tue, Wed
+
+	const today = new Date();
+
+	for (let i = 0; i < 7; i++) {
+		const date = new Date(today);
+		date.setDate(today.getDate() + i);
+
+		days.push(date.toLocaleDateString('en-US', options));
+	}
+
+	return days;
+}
+
+function getNext8Hours() {}
+
+function buildHourlyForecastInformation(weatherData) {
+	const { hourly } = weatherData;
+
+	console.log(hourly);
 }
 
 function buildDailyForecastInformation(weatherData) {
@@ -229,22 +255,6 @@ function buildMainForecastInformation(weatherData, cityData) {
 }
 
 // Daily Forecast Information
-
-function getNext7Days() {
-	const days = [];
-	const options = { weekday: 'short' }; // Mon, Tue, Wed
-
-	const today = new Date();
-
-	for (let i = 0; i < 7; i++) {
-		const date = new Date(today);
-		date.setDate(today.getDate() + i);
-
-		days.push(date.toLocaleDateString('en-US', options));
-	}
-
-	return days;
-}
 
 function setWeatherIcon(code) {
 	const iconMap = {

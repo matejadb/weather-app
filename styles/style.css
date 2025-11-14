@@ -239,11 +239,12 @@ input[type='text']:focus {
 	justify-content: space-between;
 	padding: 8rem 2.4rem;
 	border-radius: 20px;
-	background: linear-gradient(
+	/* background: linear-gradient(
 		to bottom right,
 		var(--blue-500),
 		var(--blue-700)
-	);
+	); */
+	background-image: url('../assets/images/bg-today-large.svg');
 }
 
 .location-info {
