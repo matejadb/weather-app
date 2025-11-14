@@ -157,33 +157,44 @@ function updateWeatherUI(weatherData, cityData) {
 function buildDailyForecastInformation(weatherData) {
 	const days = getNext7Days();
 	const { daily } = weatherData;
-
 	document.querySelector('.daily-forecast').innerHTML = ``;
+
 	for (let i = 0; i < 7; i++) {
 		const divCard = document.createElement('div');
 		divCard.classList.add('card');
-		const spanDay = document.createElement('span');
-		spanDay.classList.add('day');
-		spanDay.textContent = days[i];
 
-		const img = document.createElement('img');
-		img.classList.add('weather-icon');
-		img.src = setWeatherIcon(daily.weather_code[i]);
-
+		const spanDay = createDailyForecastSpan(days[i], ['day']);
+		const img = createDailyForecastIcon(daily.weather_code[i]);
 		const divRange = document.createElement('div');
 		divRange.classList.add('temperature-range');
-
-		const spanMin = document.createElement('span');
-		spanMin.classList.add('temperature', 'min');
-		spanMin.textContent = `${Math.round(daily.temperature_2m_min[i])} \u00B0`;
-		const spanMax = document.createElement('span');
-		spanMax.classList.add('temperature', 'max');
-		spanMax.textContent = `${Math.round(daily.temperature_2m_max[i])} \u00B0`;
-
+		const spanMin = createDailyForecastSpan(
+			`${Math.round(daily.temperature_2m_min[i])} \u00B0`,
+			'temperature min'
+		);
+		const spanMax = createDailyForecastSpan(
+			`${Math.round(daily.temperature_2m_max[i])} \u00B0`,
+			'temperature max'
+		);
 		divRange.append(spanMax, spanMin);
 		divCard.append(spanDay, img, divRange);
 		document.querySelector('.daily-forecast').appendChild(divCard);
 	}
+}
+
+function createDailyForecastIcon(code) {
+	const img = document.createElement('img');
+	img.classList.add('weather-icon');
+	img.src = setWeatherIcon(code);
+
+	return img;
+}
+
+function createDailyForecastSpan(content, classes) {
+	const spanDay = document.createElement('span');
+	spanDay.className = classes;
+	spanDay.textContent = content;
+
+	return spanDay;
 }
 
 function buildMainForecastInformation(weatherData, cityData) {
