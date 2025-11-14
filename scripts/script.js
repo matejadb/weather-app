@@ -19,6 +19,11 @@ const dropdownBtn = document.querySelector('.btn-dropdown');
 const dropdownContent = document.querySelector('.units-dropdown-content');
 const searchForm = document.querySelector('.search-form');
 
+const switchUnitsBtn = document.querySelector('.switch-units');
+const switchTemperatureBtn = document.querySelector('.unit-temperature');
+const switchWindSpeedBtn = document.querySelector('.unit-wind-speed');
+const switchPrecipitationBtn = document.querySelector('.unit-precipitation');
+
 const temperatureText = document.querySelector('.temperature-text');
 const temperatureIcon = document.querySelector('.temperature-icon');
 const locationText = document.querySelector('.location-text');
@@ -288,10 +293,21 @@ function setWeatherIcon(code) {
 	return icons.sunny;
 }
 
+function switchUnits() {
+	const tempBtns = dropdownTemperature.querySelectorAll('.unit-temperature');
+	const windSpeedBtns = dropdownWindSpeed.querySelectorAll('.unit-wind-speed');
+	const precipitationBtns = dropdownPrecipitation.querySelectorAll(
+		'.unit-precipitation'
+	);
+
+	// console.log(tempBtns.textContent.trim().split(' ')[0]);
+}
+
 dropdownTemperature.addEventListener('click', changeTemperatureUnits);
 dropdownWindSpeed.addEventListener('click', changeWindSpeedUnits);
 dropdownPrecipitation.addEventListener('click', changePrecipitationUnits);
 dropdownBtn.addEventListener('click', openUnitsDropdown);
 searchForm.addEventListener('submit', getWeatherInformation);
+switchUnitsBtn.addEventListener('click', switchUnits);
 
 window.addEventListener('click', closeUnitsDropdown);
