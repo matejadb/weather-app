@@ -98,25 +98,24 @@ async function initializeWithLocation(latitude, longitude) {
 
 	const weatherData = await fetchWeatherData(latitude, longitude);
 
-	const cityData = {
-		name: 'Current Location',
-		country: '',
-	};
+	// const cityData = {
+	// 	name: 'Current Location',
+	// 	country: '',
+	// };
+	const cityData = await getCityFromCoordinates(latitude, longitude);
 
 	updateWeatherUI(weatherData, cityData);
 }
 
 async function getCityFromCoordinates(latitude, longitude) {
 	const response = await fetch(
-		`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+		`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
 	);
 
 	const data = await response.json();
+	const { address } = data;
 
-	return {
-		name: data.city || data.locality,
-		country: data.countryCode,
-	};
+	return { country: address.country, name: address.city };
 }
 
 async function getWeatherByCity(cityName) {
