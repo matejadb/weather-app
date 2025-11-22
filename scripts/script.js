@@ -79,18 +79,24 @@ function error(err) {
 }
 
 async function fetchWeatherData(latitude, longitude) {
-	const unitParams = buildUnitParams(global.units);
+	showLoading();
 
-	const weather = await fetch(
-		`${
-			global.api.apiUrl
-		}latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&current=temperature_2m,${
-			global.api.apiEnd
-		}${unitParams ? `&${unitParams}` : ''}`
-	);
+	try {
+		const unitParams = buildUnitParams(global.units);
 
-	const weatherData = await weather.json();
-	return weatherData;
+		const weather = await fetch(
+			`${
+				global.api.apiUrl
+			}latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&current=temperature_2m,${
+				global.api.apiEnd
+			}${unitParams ? `&${unitParams}` : ''}`
+		);
+
+		const weatherData = await weather.json();
+		return weatherData;
+	} finally {
+		hideLoading();
+	}
 }
 
 async function initializeWithLocation(latitude, longitude) {
@@ -160,6 +166,38 @@ async function getWeatherInformation(e) {
 	global.currentLocation = null;
 
 	updateWeatherUI(weatherData, cityData);
+}
+
+function showLoading() {
+	const weatherInfoContainer = document.querySelector('.weather-info');
+	const locationInfo = weatherInfoContainer.querySelector('.location-info');
+	const temperatureContainer = weatherInfoContainer.querySelector(
+		'.temperature-container'
+	);
+	const weatherDetails = document.querySelector('.weather-details');
+	const loadingContainer = document.querySelector('.loading-container');
+
+	weatherInfoContainer.classList.add('weather-info-loading');
+	locationInfo.classList.add('hidden');
+	temperatureContainer.classList.add('hidden');
+	weatherDetails.classList.add('hidden');
+	loadingContainer.classList.remove('hidden');
+}
+
+function hideLoading() {
+	const weatherInfoContainer = document.querySelector('.weather-info');
+	const locationInfo = weatherInfoContainer.querySelector('.location-info');
+	const temperatureContainer = weatherInfoContainer.querySelector(
+		'.temperature-container'
+	);
+	const weatherDetails = document.querySelector('.weather-details');
+	const loadingContainer = document.querySelector('.loading-container');
+
+	weatherInfoContainer.classList.remove('weather-info-loading');
+	locationInfo.classList.remove('hidden');
+	temperatureContainer.classList.remove('hidden');
+	weatherDetails.classList.remove('hidden');
+	loadingContainer.classList.add('hidden');
 }
 
 // Units Dropdown Menu
