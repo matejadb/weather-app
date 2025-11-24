@@ -84,7 +84,7 @@ async function fetchWeatherData(latitude, longitude) {
 	try {
 		const unitParams = buildUnitParams(global.units);
 
-		const weather = await fetch(
+		const response = await fetch(
 			`${
 				global.api.apiUrl
 			}latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&current=temperature_2m,${
@@ -92,10 +92,11 @@ async function fetchWeatherData(latitude, longitude) {
 			}${unitParams ? `&${unitParams}` : ''}`
 		);
 
-		const weatherData = await weather.json();
+		const weatherData = await response.json();
 		return weatherData;
-	} finally {
-		hideLoading();
+	} catch (err) {
+		console.error('Failed to fetch data.', err.message);
+		throw err;
 	}
 }
 
@@ -104,10 +105,6 @@ async function initializeWithLocation(latitude, longitude) {
 
 	const weatherData = await fetchWeatherData(latitude, longitude);
 
-	// const cityData = {
-	// 	name: 'Current Location',
-	// 	country: '',
-	// };
 	const cityData = await getCityFromCoordinates(latitude, longitude);
 
 	updateWeatherUI(weatherData, cityData);
@@ -174,14 +171,12 @@ function showLoading() {
 	const temperatureContainer = weatherInfoContainer.querySelector(
 		'.temperature-container'
 	);
-	const weatherDetails = document.querySelector('.weather-details');
 	const loadingContainer = document.querySelector('.loading-container');
-
 	weatherInfoContainer.classList.add('weather-info-loading');
 	locationInfo.classList.add('hidden');
 	temperatureContainer.classList.add('hidden');
-	weatherDetails.classList.add('hidden');
 	loadingContainer.classList.remove('hidden');
+	console.log('Now loading');
 }
 
 function hideLoading() {
@@ -190,14 +185,13 @@ function hideLoading() {
 	const temperatureContainer = weatherInfoContainer.querySelector(
 		'.temperature-container'
 	);
-	const weatherDetails = document.querySelector('.weather-details');
 	const loadingContainer = document.querySelector('.loading-container');
 
 	weatherInfoContainer.classList.remove('weather-info-loading');
 	locationInfo.classList.remove('hidden');
 	temperatureContainer.classList.remove('hidden');
-	weatherDetails.classList.remove('hidden');
 	loadingContainer.classList.add('hidden');
+	console.log('Finished loading');
 }
 
 // Units Dropdown Menu
@@ -324,6 +318,11 @@ function updateWeatherUI(weatherData, cityData) {
 	buildMainForecastInformation(weatherData, cityData);
 	buildDailyForecastInformation(weatherData);
 	buildHourlyForecastInformation(weatherData);
+	requestAnimationFrame(() => {
+		requestAnimationFrame(() => {
+			hideLoading();
+		});
+	});
 }
 
 function getNext7Days() {
@@ -462,6 +461,8 @@ dropdownPrecipitation.addEventListener('click', changePrecipitationUnits);
 dropdownBtn.addEventListener('click', openUnitsDropdown);
 searchForm.addEventListener('submit', getWeatherInformation);
 switchUnitsBtn.addEventListener('click', switchUnits);
+
+// document.addEventListener('DOMContentLoaded', showLoading);
 
 window.addEventListener('click', closeUnitsDropdown);
 navigator.geolocation.getCurrentPosition(success, error, options);

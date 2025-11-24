@@ -352,6 +352,7 @@ input[type='text']:focus {
 	border: 1px solid var(--neutral-600);
 	border-radius: 12px;
 	width: 100%;
+	min-height: 16.5rem;
 }
 
 .day {
@@ -463,12 +464,8 @@ input[type='text']:focus {
 	justify-content: center;
 }
 
-.hidden {
-	display: none;
-}
-
 .loading-container {
-	display: none;
+	display: flex;
 	align-items: center;
 	justify-content: center;
 	flex-direction: column;
@@ -510,6 +507,10 @@ input[type='text']:focus {
 	100% {
 		box-shadow: -38px 6px, -14px -6px, 14px 6px;
 	}
+}
+
+.hidden {
+	display: none;
 }
 
 /* - Mobile: 375px
