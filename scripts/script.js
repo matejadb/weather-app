@@ -49,6 +49,7 @@ const humidity = document.querySelector('.detail-humidity');
 const wind = document.querySelector('.detail-wind');
 const precipitation = document.querySelector('.detail-precipitation');
 
+const retryBtn = document.querySelector('.btn-retry');
 // Fetch Data
 function buildUnitParams(units) {
 	const params = [];
@@ -92,6 +93,11 @@ async function fetchWeatherData(latitude, longitude) {
 			}${unitParams ? `&${unitParams}` : ''}`
 		);
 
+		if (response.status === 400 || response.status === 500) {
+			showServerError();
+			return;
+		}
+
 		const weatherData = await response.json();
 		return weatherData;
 	} catch (err) {
@@ -132,22 +138,17 @@ async function getWeatherByCity(cityName) {
 	return { weatherData, cityData };
 }
 
-async function searchByCity(cityName) {
-	const cityData = await getCityInfo(cityName);
-	const weatherData = await fetchWeatherData(
-		cityData.latitude,
-		cityData.longitude
-	);
-
-	global.lastCity = cityName;
-	updateWeatherUI(weatherData, cityData);
-}
-
 async function getCityInfo(city) {
 	const geo = await fetch(
 		`https://geocoding-api.open-meteo.com/v1/search?name=${city}`
 	);
 	const geoData = await geo.json();
+
+	if (!geoData.results || geoData.results.length === 0) {
+		console.log(geo.status);
+		throw new Error('error');
+	}
+
 	const place = geoData.results[0];
 
 	return place;
@@ -176,7 +177,6 @@ function showLoading() {
 	locationInfo.classList.add('hidden');
 	temperatureContainer.classList.add('hidden');
 	loadingContainer.classList.remove('hidden');
-	console.log('Now loading');
 }
 
 function hideLoading() {
@@ -191,9 +191,28 @@ function hideLoading() {
 	locationInfo.classList.remove('hidden');
 	temperatureContainer.classList.remove('hidden');
 	loadingContainer.classList.add('hidden');
-	console.log('Finished loading');
 }
 
+function showServerError() {
+	const errorContainer = document.querySelector('.search-server-error');
+	const contentContainer = document.querySelector('.content-container');
+
+	errorContainer.classList.remove('hidden');
+	contentContainer.classList.add('hidden');
+}
+function hideServerError() {
+	const errorContainer = document.querySelector('.search-server-error');
+	const contentContainer = document.querySelector('.content-container');
+
+	errorContainer.classList.add('hidden');
+	contentContainer.classList.remove('hidden');
+}
+
+function retrySearch() {
+	document.querySelector('input').value = '';
+	hideServerError();
+	initializeWithLocation();
+}
 // Units Dropdown Menu
 
 function openUnitsDropdown(e) {
@@ -459,6 +478,7 @@ dropdownPrecipitation.addEventListener('click', changePrecipitationUnits);
 dropdownBtn.addEventListener('click', openUnitsDropdown);
 searchForm.addEventListener('submit', getWeatherInformation);
 switchUnitsBtn.addEventListener('click', switchUnits);
+retryBtn.addEventListener('click', retrySearch);
 
 // document.addEventListener('DOMContentLoaded', showLoading);
 
