@@ -95,6 +95,7 @@ async function fetchWeatherData(latitude, longitude) {
 
 		if (response.status === 400 || response.status === 500) {
 			showServerError();
+			return;
 		}
 
 		const weatherData = await response.json();
