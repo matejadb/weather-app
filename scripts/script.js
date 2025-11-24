@@ -211,7 +211,7 @@ function hideServerError() {
 function retrySearch() {
 	document.querySelector('input').value = '';
 	hideServerError();
-	initializeWithLocation();
+	window.location.reload();
 }
 // Units Dropdown Menu
 
