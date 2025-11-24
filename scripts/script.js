@@ -79,18 +79,25 @@ function error(err) {
 }
 
 async function fetchWeatherData(latitude, longitude) {
-	const unitParams = buildUnitParams(global.units);
+	showLoading();
 
-	const weather = await fetch(
-		`${
-			global.api.apiUrl
-		}latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&current=temperature_2m,${
-			global.api.apiEnd
-		}${unitParams ? `&${unitParams}` : ''}`
-	);
+	try {
+		const unitParams = buildUnitParams(global.units);
 
-	const weatherData = await weather.json();
-	return weatherData;
+		const response = await fetch(
+			`${
+				global.api.apiUrl
+			}latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&current=temperature_2m,${
+				global.api.apiEnd
+			}${unitParams ? `&${unitParams}` : ''}`
+		);
+
+		const weatherData = await response.json();
+		return weatherData;
+	} catch (err) {
+		console.error('Failed to fetch data.', err.message);
+		throw err;
+	}
 }
 
 async function initializeWithLocation(latitude, longitude) {
@@ -98,10 +105,6 @@ async function initializeWithLocation(latitude, longitude) {
 
 	const weatherData = await fetchWeatherData(latitude, longitude);
 
-	// const cityData = {
-	// 	name: 'Current Location',
-	// 	country: '',
-	// };
 	const cityData = await getCityFromCoordinates(latitude, longitude);
 
 	updateWeatherUI(weatherData, cityData);
@@ -160,6 +163,35 @@ async function getWeatherInformation(e) {
 	global.currentLocation = null;
 
 	updateWeatherUI(weatherData, cityData);
+}
+
+function showLoading() {
+	const weatherInfoContainer = document.querySelector('.weather-info');
+	const locationInfo = weatherInfoContainer.querySelector('.location-info');
+	const temperatureContainer = weatherInfoContainer.querySelector(
+		'.temperature-container'
+	);
+	const loadingContainer = document.querySelector('.loading-container');
+	weatherInfoContainer.classList.add('weather-info-loading');
+	locationInfo.classList.add('hidden');
+	temperatureContainer.classList.add('hidden');
+	loadingContainer.classList.remove('hidden');
+	console.log('Now loading');
+}
+
+function hideLoading() {
+	const weatherInfoContainer = document.querySelector('.weather-info');
+	const locationInfo = weatherInfoContainer.querySelector('.location-info');
+	const temperatureContainer = weatherInfoContainer.querySelector(
+		'.temperature-container'
+	);
+	const loadingContainer = document.querySelector('.loading-container');
+
+	weatherInfoContainer.classList.remove('weather-info-loading');
+	locationInfo.classList.remove('hidden');
+	temperatureContainer.classList.remove('hidden');
+	loadingContainer.classList.add('hidden');
+	console.log('Finished loading');
 }
 
 // Units Dropdown Menu
@@ -286,6 +318,9 @@ function updateWeatherUI(weatherData, cityData) {
 	buildMainForecastInformation(weatherData, cityData);
 	buildDailyForecastInformation(weatherData);
 	buildHourlyForecastInformation(weatherData);
+	// Use a small timeout to ensure DOM updates complete before hiding the loader.
+	// This avoids race conditions and is more explicit than double requestAnimationFrame.
+	setTimeout(hideLoading, 50);
 }
 
 function getNext7Days() {
@@ -424,6 +459,8 @@ dropdownPrecipitation.addEventListener('click', changePrecipitationUnits);
 dropdownBtn.addEventListener('click', openUnitsDropdown);
 searchForm.addEventListener('submit', getWeatherInformation);
 switchUnitsBtn.addEventListener('click', switchUnits);
+
+// document.addEventListener('DOMContentLoaded', showLoading);
 
 window.addEventListener('click', closeUnitsDropdown);
 navigator.geolocation.getCurrentPosition(success, error, options);

@@ -129,12 +129,16 @@
 				<div class="content-container">
 					<div class="left-content-container">
 						<div class="weather-info-container">
-							<div class="weather-info">
-								<div class="location-info">
-									<span class="location-text">Berlin, Germany</span>
-									<span class="date-text">Tuesday, Aug 5, 2025</span>
+							<div class="weather-info weather-info-loading">
+								<div class="loading-container">
+									<span class="loader"></span>
+									<span>Loading...</span>
 								</div>
-								<div class="temperature-container">
+								<div class="location-info hidden">
+									<span class="location-text"></span>
+									<span class="date-text"></span>
+								</div>
+								<div class="temperature-container hidden">
 									<img
 										src="./assets/images/icon-sunny.webp"
 										class="temperature-icon"
@@ -147,21 +151,19 @@
 							<div class="weather-details">
 								<div class="detail">
 									<span class="detail-title">Feels like</span>
-									<span class="detail-text detail-feels-like"
-										>18 <span> &deg;</span>
-									</span>
+									<span class="detail-text detail-feels-like">&mdash;</span>
 								</div>
 								<div class="detail">
 									<span class="detail-title">Humidity</span>
-									<span class="detail-text detail-humidity">46%</span>
+									<span class="detail-text detail-humidity">&mdash;</span>
 								</div>
 								<div class="detail">
 									<span class="detail-title">Wind</span>
-									<span class="detail-text detail-wind">14 km/h</span>
+									<span class="detail-text detail-wind">&mdash;</span>
 								</div>
 								<div class="detail">
 									<span class="detail-title">Precipitation</span>
-									<span class="detail-text detail-precipitation">0 mm</span>
+									<span class="detail-text detail-precipitation">&mdash;</span>
 								</div>
 							</div>
 						</div>
@@ -169,96 +171,13 @@
 						<div class="daily-forecast-container">
 							<span class="daily-forecast-title">Daily forecast</span>
 							<div class="daily-forecast">
-								<div class="card">
-									<span class="day">Tue</span>
-									<img
-										src="./assets/images/icon-rain.webp"
-										class="weather-icon"
-										alt=""
-									/>
-									<div class="temperature-range">
-										<span class="temperature min">20&deg;</span>
-										<span class="temperature max">14&deg;</span>
-									</div>
-								</div>
-
-								<div class="card">
-									<span class="day">Wed</span>
-									<img
-										src="./assets/images/icon-rain.webp"
-										class="weather-icon"
-										alt=""
-									/>
-									<div class="temperature-range">
-										<span class="temperature min">20&deg;</span>
-										<span class="temperature max">14&deg;</span>
-									</div>
-								</div>
-
-								<div class="card">
-									<span class="day">Thu</span>
-									<img
-										src="./assets/images/icon-rain.webp"
-										class="weather-icon"
-										alt=""
-									/>
-									<div class="temperature-range">
-										<span class="temperature min">20&deg;</span>
-										<span class="temperature max">14&deg;</span>
-									</div>
-								</div>
-
-								<div class="card">
-									<span class="day">Fri</span>
-									<img
-										src="./assets/images/icon-rain.webp"
-										class="weather-icon"
-										alt=""
-									/>
-									<div class="temperature-range">
-										<span class="temperature min">20&deg;</span>
-										<span class="temperature max">14&deg;</span>
-									</div>
-								</div>
-
-								<div class="card">
-									<span class="day">Sat</span>
-									<img
-										src="./assets/images/icon-rain.webp"
-										class="weather-icon"
-										alt=""
-									/>
-									<div class="temperature-range">
-										<span class="temperature min">20&deg;</span>
-										<span class="temperature max">14&deg;</span>
-									</div>
-								</div>
-
-								<div class="card">
-									<span class="day">Sun</span>
-									<img
-										src="./assets/images/icon-rain.webp"
-										class="weather-icon"
-										alt=""
-									/>
-									<div class="temperature-range">
-										<span class="temperature min">20&deg;</span>
-										<span class="temperature max">14&deg;</span>
-									</div>
-								</div>
-
-								<div class="card">
-									<span class="day">Mon</span>
-									<img
-										src="./assets/images/icon-rain.webp"
-										class="weather-icon"
-										alt=""
-									/>
-									<div class="temperature-range">
-										<span class="temperature min">20&deg;</span>
-										<span class="temperature max">14&deg;</span>
-									</div>
-								</div>
+								<div class="card"></div>
+								<div class="card"></div>
+								<div class="card"></div>
+								<div class="card"></div>
+								<div class="card"></div>
+								<div class="card"></div>
+								<div class="card"></div>
 							</div>
 						</div>
 					</div>
