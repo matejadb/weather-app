@@ -318,11 +318,9 @@ function updateWeatherUI(weatherData, cityData) {
 	buildMainForecastInformation(weatherData, cityData);
 	buildDailyForecastInformation(weatherData);
 	buildHourlyForecastInformation(weatherData);
-	requestAnimationFrame(() => {
-		requestAnimationFrame(() => {
-			hideLoading();
-		});
-	});
+	// Use a small timeout to ensure DOM updates complete before hiding the loader.
+	// This avoids race conditions and is more explicit than double requestAnimationFrame.
+	setTimeout(hideLoading, 50);
 }
 
 function getNext7Days() {
