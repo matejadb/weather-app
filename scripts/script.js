@@ -1,3 +1,4 @@
+// GLOBAL
 const global = {
 	currentSystem: 'metric',
 	units: {
@@ -27,6 +28,7 @@ const unitSystem = {
 	},
 };
 
+// INITIALIZATION
 const dropdownTemperature = document.querySelector('.temperature');
 const dropdownWindSpeed = document.querySelector('.wind-speed');
 const dropdownPrecipitation = document.querySelector('.precipitation');
@@ -50,7 +52,20 @@ const wind = document.querySelector('.detail-wind');
 const precipitation = document.querySelector('.detail-precipitation');
 
 const retryBtn = document.querySelector('.btn-retry');
-// Fetch Data
+
+const errorContainer = document.querySelector('.search-server-error');
+const contentContainer = document.querySelector('.content-container');
+const weatherInfoContainer = document.querySelector('.weather-info');
+const locationInfo = weatherInfoContainer.querySelector('.location-info');
+const temperatureContainer = weatherInfoContainer.querySelector(
+	'.temperature-container'
+);
+const loadingContainer = document.querySelector('.loading-container');
+const searchNotFoundContainer = document.querySelector('.search-not-found');
+
+// FUNCTIONS
+
+// Data Fetching
 function buildUnitParams(units) {
 	const params = [];
 
@@ -93,10 +108,7 @@ async function fetchWeatherData(latitude, longitude) {
 			}${unitParams ? `&${unitParams}` : ''}`
 		);
 
-		if (response.status === 400 || response.status === 500) {
-			showServerError();
-			return;
-		}
+		checkServerError(response.status);
 
 		const weatherData = await response.json();
 		return weatherData;
@@ -120,8 +132,9 @@ async function getCityFromCoordinates(latitude, longitude) {
 	const response = await fetch(
 		`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
 	);
-
+	checkServerError(response.status);
 	const data = await response.json();
+
 	const { address } = data;
 
 	return { country: address.country, name: address.city };
@@ -139,14 +152,16 @@ async function getWeatherByCity(cityName) {
 }
 
 async function getCityInfo(city) {
-	const geo = await fetch(
+	const response = await fetch(
 		`https://geocoding-api.open-meteo.com/v1/search?name=${city}`
 	);
-	const geoData = await geo.json();
+
+	checkServerError(response.status);
+	const geoData = await response.json();
 
 	if (!geoData.results || geoData.results.length === 0) {
-		console.log(geo.status);
-		throw new Error('error');
+		showSearchNotFound();
+		throw new Error('City not found');
 	}
 
 	const place = geoData.results[0];
@@ -156,6 +171,8 @@ async function getCityInfo(city) {
 
 async function getWeatherInformation(e) {
 	if (e) e.preventDefault();
+	if (contentContainer.classList.contains('hidden')) hideSearchNotFound();
+
 	const input = document.querySelector('input').value;
 
 	const { weatherData, cityData } = await getWeatherByCity(input);
@@ -166,13 +183,9 @@ async function getWeatherInformation(e) {
 	updateWeatherUI(weatherData, cityData);
 }
 
+// Loading States
+
 function showLoading() {
-	const weatherInfoContainer = document.querySelector('.weather-info');
-	const locationInfo = weatherInfoContainer.querySelector('.location-info');
-	const temperatureContainer = weatherInfoContainer.querySelector(
-		'.temperature-container'
-	);
-	const loadingContainer = document.querySelector('.loading-container');
 	weatherInfoContainer.classList.add('weather-info-loading');
 	locationInfo.classList.add('hidden');
 	temperatureContainer.classList.add('hidden');
@@ -180,32 +193,37 @@ function showLoading() {
 }
 
 function hideLoading() {
-	const weatherInfoContainer = document.querySelector('.weather-info');
-	const locationInfo = weatherInfoContainer.querySelector('.location-info');
-	const temperatureContainer = weatherInfoContainer.querySelector(
-		'.temperature-container'
-	);
-	const loadingContainer = document.querySelector('.loading-container');
-
 	weatherInfoContainer.classList.remove('weather-info-loading');
 	locationInfo.classList.remove('hidden');
 	temperatureContainer.classList.remove('hidden');
 	loadingContainer.classList.add('hidden');
 }
 
-function showServerError() {
-	const errorContainer = document.querySelector('.search-server-error');
-	const contentContainer = document.querySelector('.content-container');
+// Error Handling
 
+function showServerError() {
 	errorContainer.classList.remove('hidden');
 	contentContainer.classList.add('hidden');
 }
 function hideServerError() {
-	const errorContainer = document.querySelector('.search-server-error');
-	const contentContainer = document.querySelector('.content-container');
-
 	errorContainer.classList.add('hidden');
 	contentContainer.classList.remove('hidden');
+}
+
+function showSearchNotFound() {
+	searchNotFoundContainer.classList.remove('hidden');
+	contentContainer.classList.add('hidden');
+}
+function hideSearchNotFound() {
+	searchNotFoundContainer.classList.add('hidden');
+	contentContainer.classList.remove('hidden');
+}
+
+function checkServerError(status) {
+	if (status === 500) {
+		showServerError();
+		throw new Error(`Problem fetching data.`);
+	}
 }
 
 function retrySearch() {
@@ -213,6 +231,7 @@ function retrySearch() {
 	hideServerError();
 	window.location.reload();
 }
+
 // Units Dropdown Menu
 
 function openUnitsDropdown(e) {
@@ -331,15 +350,6 @@ function switchUnits() {
 	});
 
 	global.currentSystem = targetSystem;
-}
-
-function updateWeatherUI(weatherData, cityData) {
-	buildMainForecastInformation(weatherData, cityData);
-	buildDailyForecastInformation(weatherData);
-	buildHourlyForecastInformation(weatherData);
-	// Use a small timeout to ensure DOM updates complete before hiding the loader.
-	// This avoids race conditions and is more explicit than double requestAnimationFrame.
-	setTimeout(hideLoading, 50);
 }
 
 function getNext7Days() {
@@ -472,15 +482,25 @@ function setWeatherIcon(code) {
 	return icons.sunny;
 }
 
-dropdownTemperature.addEventListener('click', changeTemperatureUnits);
-dropdownWindSpeed.addEventListener('click', changeWindSpeedUnits);
-dropdownPrecipitation.addEventListener('click', changePrecipitationUnits);
-dropdownBtn.addEventListener('click', openUnitsDropdown);
-searchForm.addEventListener('submit', getWeatherInformation);
-switchUnitsBtn.addEventListener('click', switchUnits);
-retryBtn.addEventListener('click', retrySearch);
+function updateWeatherUI(weatherData, cityData) {
+	buildMainForecastInformation(weatherData, cityData);
+	buildDailyForecastInformation(weatherData);
+	buildHourlyForecastInformation(weatherData);
 
-// document.addEventListener('DOMContentLoaded', showLoading);
+	setTimeout(hideLoading, 50);
+}
 
-window.addEventListener('click', closeUnitsDropdown);
-navigator.geolocation.getCurrentPosition(success, error, options);
+function init() {
+	dropdownWindSpeed.addEventListener('click', changeWindSpeedUnits);
+	dropdownPrecipitation.addEventListener('click', changePrecipitationUnits);
+	dropdownTemperature.addEventListener('click', changeTemperatureUnits);
+	dropdownBtn.addEventListener('click', openUnitsDropdown);
+	searchForm.addEventListener('submit', getWeatherInformation);
+	switchUnitsBtn.addEventListener('click', switchUnits);
+	retryBtn.addEventListener('click', retrySearch);
+
+	window.addEventListener('click', closeUnitsDropdown);
+	navigator.geolocation.getCurrentPosition(success, error, options);
+}
+
+init();
