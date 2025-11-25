@@ -515,6 +515,31 @@ input[type='text']:focus {
 	background-color: var(--neutral-700);
 }
 
+.city-dropdown {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 8px;
+	border-radius: 12px;
+	background-color: var(--neutral-800);
+}
+
+.city-option {
+	color: var(--neutral-0);
+	font-size: 1.6rem;
+	font-family: 'DM Sans', sans-serif;
+	line-height: 1.2;
+	font-weight: 500;
+	text-decoration: none;
+	padding: 8px 10px;
+}
+
+.city-option:hover {
+	outline: 1px solid var(--neutral-600);
+	background-color: var(--neutral-700);
+	border-radius: 8px;
+}
+
 .btn-retry img {
 	height: 1.6rem;
 	width: 1.6rem;

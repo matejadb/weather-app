@@ -62,6 +62,8 @@ const temperatureContainer = weatherInfoContainer.querySelector(
 );
 const loadingContainer = document.querySelector('.loading-container');
 const searchNotFoundContainer = document.querySelector('.search-not-found');
+const searchInput = document.querySelector('input[type="text"]');
+const cityDropdown = document.querySelector('.city-dropdown');
 
 // FUNCTIONS
 
@@ -125,6 +127,7 @@ async function initializeWithLocation(latitude, longitude) {
 
 	const cityData = await getCityFromCoordinates(latitude, longitude);
 
+	// console.log(cityData);
 	updateWeatherUI(weatherData, cityData);
 }
 
@@ -134,7 +137,7 @@ async function getCityFromCoordinates(latitude, longitude) {
 	);
 	checkServerError(response.status);
 	const data = await response.json();
-
+	// console.log(data);
 	const { address } = data;
 
 	return { country: address.country, name: address.city };
@@ -158,7 +161,6 @@ async function getCityInfo(city) {
 
 	checkServerError(response.status);
 	const geoData = await response.json();
-
 	if (!geoData.results || geoData.results.length === 0) {
 		showSearchNotFound();
 		throw new Error('City not found');
@@ -180,6 +182,8 @@ async function getWeatherInformation(e) {
 	global.lastCity = input;
 	global.currentLocation = null;
 
+	searchInput.value = '';
+	hideCityDropdown();
 	updateWeatherUI(weatherData, cityData);
 }
 
@@ -232,6 +236,69 @@ function retrySearch() {
 	window.location.reload();
 }
 
+// City Search Dropdown
+let debounceTimer;
+
+function handleCitySearch(e) {
+	const query = e.target.value.trim();
+	clearTimeout(debounceTimer);
+
+	if (query.length < 3) {
+		hideCityDropdown();
+		return;
+	}
+
+	debounceTimer = setTimeout(() => {
+		fetchCitySuggestion(query);
+	}, 300);
+}
+
+async function fetchCitySuggestion(cityName) {
+	try {
+		const response = await fetch(
+			`https://geocoding-api.open-meteo.com/v1/search?name=${cityName}&count=4`
+		);
+		const data = await response.json();
+
+		if (data.results) {
+			showCityDropdown(data.results);
+		}
+
+		return data.results;
+	} catch (error) {
+		throw new Error(error);
+	}
+}
+
+function selectDropdownCity(city) {
+	hideCityDropdown();
+	initializeWithLocation(city.latitude, city.longitude);
+}
+
+function showCityDropdown(cities) {
+	cityDropdown.innerHTML = ``;
+
+	cities.forEach((city) => {
+		const cityOption = document.createElement('a');
+		cityOption.classList.add('city-option');
+		cityOption.href = '#';
+		cityOption.textContent = `${city.name}, ${city.admin1}, ${city.country}`;
+
+		cityOption.addEventListener('click', (e) => {
+			e.preventDefault();
+			selectDropdownCity(city);
+		});
+
+		cityDropdown.appendChild(cityOption);
+	});
+
+	cityDropdown.classList.remove('hidden');
+}
+
+function hideCityDropdown() {
+	cityDropdown.classList.add('hidden');
+}
+
 // Units Dropdown Menu
 
 function openUnitsDropdown(e) {
@@ -239,9 +306,12 @@ function openUnitsDropdown(e) {
 	dropdownContent.classList.toggle('show');
 }
 
-function closeUnitsDropdown(e) {
+function closeDropdown(e) {
 	if (!dropdownContent.contains(e.target) && e.target !== dropdownBtn) {
 		dropdownContent.classList.remove('show');
+	}
+	if (!cityDropdown.contains(e.target) && e.target !== searchInput) {
+		hideCityDropdown();
 	}
 }
 
@@ -498,8 +568,8 @@ function init() {
 	searchForm.addEventListener('submit', getWeatherInformation);
 	switchUnitsBtn.addEventListener('click', switchUnits);
 	retryBtn.addEventListener('click', retrySearch);
-
-	window.addEventListener('click', closeUnitsDropdown);
+	searchInput.addEventListener('input', handleCitySearch);
+	window.addEventListener('click', closeDropdown);
 	navigator.geolocation.getCurrentPosition(success, error, options);
 }
 
