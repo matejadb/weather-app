@@ -1,3 +1,4 @@
+/* UNITS */
 .units-dropdown {
 	position: relative;
 	display: inline-block;
@@ -79,4 +80,24 @@
 .units-dropdown-item:focus {
 	outline: 1px solid var(--neutral-0);
 	outline-offset: 2px;
+}
+
+/* CITY SEARCH */
+.input-wrapper {
+	position: relative;
+}
+
+.city-dropdown {
+	position: absolute;
+	top: calc(100% + 0.8rem); /* Right below input */
+	left: 0;
+	right: 0; /* Stretches to match input width exactly */
+	z-index: 10;
+	background-color: var(--neutral-800);
+	padding: 0.6rem 0.8rem;
+	border-radius: 12px;
+	border: 1px solid var(--neutral-600);
+	box-shadow: 0 8px 16px rgba(2, 1, 44, 0.32);
+	max-height: 30rem;
+	overflow-y: auto;
 }
