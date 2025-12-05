@@ -438,10 +438,198 @@ function getNext7Days() {
 	return days;
 }
 
-function getNext8Hours() {}
+function getNext8Hours(hourlyData) {
+	const now = new Date();
+	const currentHour = now.getHours();
+	const hoursToShow = 8;
+	const hourlyForecast = [];
+
+	for (let i = 0; i < hoursToShow; i++) {
+		const index = currentHour + i;
+
+		// Make sure we don't go beyond the 168 hours
+		if (index < hourlyData.time.length) {
+			hourlyForecast.push({
+				time: hourlyData.time[index],
+				temperature: hourlyData.temperature_2m[index],
+				weatherCode: hourlyData.weather_code[index],
+			});
+		}
+	}
+
+	return hourlyForecast;
+}
 
 function buildHourlyForecastInformation(weatherData) {
 	const { hourly } = weatherData;
+	const container = document.querySelector('.hourly-forecast-container');
+
+	const today = new Date();
+	const currentDayName = today.toLocaleDateString('en-US', { weekday: 'long' });
+
+	container.innerHTML = `<div class="hourly-forecast-header">
+                            <span class="hourly-forecast-title">Hourly forecast</span>
+                             <div class="day-selector">
+                                    <button class="day-selector-btn">
+                                        <span class="selected-day">${currentDayName}</span>
+                                        <img 
+                                            src="./assets/images/icon-dropdown.svg"
+                                            class="icon-dropdown"
+                                            alt=""
+                                        />
+                                    </button>
+                                    <div  class="day-selector-dropdown hidden">
+                                        ${generateDayOptions()}
+                                    </div>
+                            </div> 
+                        </div>`;
+
+	const todayHours = getHoursForDay(hourly, today.getDay());
+	appendHourlyCards(container, todayHours);
+	setupDaySelector(container, hourly);
+}
+
+function generateDayOptions() {
+	const days = [
+		'Sunday',
+		'Monday',
+		'Tuesday',
+		'Wednesday',
+		'Thursday',
+		'Friday',
+		'Saturday',
+	];
+
+	return days
+		.map(
+			(day, index) => `
+		<button class="day-option" data-day="${index}">
+			${day}
+		</button>
+	`
+		)
+		.join('');
+}
+
+function getHoursForDay(hourlyData, dayIndex) {
+	const now = new Date();
+	const currentHour = now.getHours();
+	const currentDay = now.getDay();
+
+	const hourlyForecast = [];
+
+	for (let i = 0; i < hourlyData.time.length; i++) {
+		const date = new Date(hourlyData.time[i]);
+
+		if (date.getDay() === dayIndex) {
+			// If it's today, only include hours from current hour onwards
+			if (dayIndex === currentDay) {
+				const hour = date.getHours();
+				if (hour >= currentHour && hourlyForecast.length < 8) {
+					hourlyForecast.push({
+						time: hourlyData.time[i],
+						temperature: hourlyData.temperature_2m[i],
+						weatherCode: hourlyData.weather_code[i],
+					});
+				}
+			} else if (hourlyForecast.length < 8) {
+				// For other days, take first 8 hours
+				hourlyForecast.push({
+					time: hourlyData.time[i],
+					temperature: hourlyData.temperature_2m[i],
+					weatherCode: hourlyData.weather_code[i],
+				});
+			}
+		}
+
+		// Stop early if we already have 8 hours
+		if (hourlyForecast.length >= 8) break;
+	}
+
+	return hourlyForecast;
+}
+
+function appendHourlyCards(container, hours) {
+	const existingCards = container.querySelectorAll('.hourly-weather-card');
+	existingCards.forEach((card) => card.remove());
+
+	hours.forEach((hour) => {
+		const card = createHourlyCard(hour);
+		container.appendChild(card);
+	});
+}
+
+function createHourlyCard(hourData) {
+	const card = document.createElement('div');
+	card.classList.add('hourly-weather-card');
+
+	const timeDiv = document.createElement('div');
+	timeDiv.classList.add('hourly-forecast-time');
+	const icon = document.createElement('img');
+	icon.classList.add('forecast-weather-icon');
+	icon.src = setWeatherIcon(hourData.weatherCode);
+
+	const time = document.createElement('span');
+	time.classList.add('forecast-time');
+	time.textContent = formatHourlyTime(hourData.time);
+
+	timeDiv.append(icon, time);
+
+	const temp = document.createElement('span');
+	temp.classList.add('temperature');
+	temp.textContent = `${Math.round(hourData.temperature)}\u00B0`;
+
+	card.append(timeDiv, temp);
+
+	return card;
+}
+function setupDaySelector(container, hourlyData) {
+	const daySelectorBtn = container.querySelector('.day-selector-btn');
+	const dropdown = container.querySelector('.day-selector-dropdown');
+	const dayOptions = container.querySelectorAll('.day-option');
+	const today = new Date().getDay();
+
+	// Toggle dropdown
+	daySelectorBtn.addEventListener('click', (e) => {
+		e.stopPropagation();
+		dropdown.classList.toggle('hidden');
+	});
+
+	// Handle day selection
+	dayOptions.forEach((option) => {
+		option.addEventListener('click', () => {
+			const selectedDay = parseInt(option.dataset.day);
+			const dayName = option.textContent.trim();
+
+			// Update button text
+			container.querySelector('.selected-day').textContent = dayName;
+
+			// Update hourly cards
+			const hoursForDay = getHoursForDay(hourlyData, selectedDay);
+			appendHourlyCards(container, hoursForDay);
+
+			// Close dropdown
+			dropdown.classList.add('hidden');
+		});
+	});
+
+	// Close dropdown when clicking outside
+	document.addEventListener('click', (e) => {
+		if (!container.querySelector('.day-selector').contains(e.target)) {
+			dropdown.classList.add('hidden');
+		}
+	});
+}
+
+function formatHourlyTime(timeString) {
+	const date = new Date(timeString);
+	const hours = date.getHours();
+
+	// Convert 24-hour to 12-hour format
+	const period = hours >= 12 ? 'PM' : 'AM';
+	const displayHour = hours % 12 || 12; // 0 becomes 12
+
+	return `${displayHour} ${period}`;
 }
 
 function buildDailyForecastInformation(weatherData) {
