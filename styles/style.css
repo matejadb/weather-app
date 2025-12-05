@@ -241,6 +241,8 @@ input[type='text']:focus {
 	border-radius: 20px;
 
 	background-image: url('../assets/images/bg-today-large.svg');
+	background-repeat: no-repeat;
+	background-size: cover;
 }
 
 .location-info {
